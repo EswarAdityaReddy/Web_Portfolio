@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  background: #030712;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top, rgba(0, 255, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 80% 20%, rgba(0, 163, 255, 0.15), transparent 22%),
+    linear-gradient(180deg, #030712 0%, #02050d 100%);
+  color: #e5f9ff;
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+}
+
+/* HUD Grid Background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
+  opacity: 0.35;
+  z-index: 0;
+}
+
+::selection {
+  background: rgba(0, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(3, 7, 18, 0.9);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 255, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 255, 0.5);
+}
+
+@layer components {
+  .holo-panel {
+    @apply rounded-3xl border border-cyan/20 bg-white/5 backdrop-blur-xl shadow-panel;
+  }
+
+  .holo-panel-strong {
+    @apply rounded-[2rem] border border-cyan/30 bg-slate-950/70 backdrop-blur-2xl shadow-glow;
+  }
+
+  .holo-border {
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 255, 255, 0.18),
+      0 0 0 1px rgba(0, 163, 255, 0.08),
+      0 18px 70px rgba(0, 0, 0, 0.35);
+  }
+
+  .terminal-grid {
+    background-image: linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .scan-lines {
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(0, 255, 255, 0.04) 50%,
+      transparent 100%
+    );
+    animation: scan 6s linear infinite;
+  }
+
+  .glow-text {
+    text-shadow: 0 0 16px rgba(0, 255, 255, 0.35), 0 0 32px rgba(0, 163, 255, 0.18);
+  }
+
+  .glow-text-strong {
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 40px rgba(0, 163, 255, 0.3), 0 0 60px rgba(0, 229, 255, 0.15);
+  }
+
+  .orb-core {
+    box-shadow:
+      0 0 40px rgba(0, 255, 255, 0.45),
+      inset 0 0 40px rgba(0, 163, 255, 0.28);
+  }
+
+  .data-stream {
+    background-image: linear-gradient(180deg, rgba(0, 255, 255, 0.12), rgba(0, 163, 255, 0));
+    background-size: 100% 180%;
+  }
+
+  /* 3D card hover tilt */
+  .card-3d {
+    transition: transform 0.3s ease;
+    transform-style: preserve-3d;
+  }
+  .card-3d:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-8px);
+  }
+
+  /* Magnetic button */
+  .btn-magnetic {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .btn-magnetic:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.4), 0 0 50px rgba(0, 255, 255, 0.15);
+  }
+  .btn-magnetic:active {
+    transform: scale(0.98);
+  }
+
+  /* Shimmer border effect */
+  .shimmer-border {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer-border::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.15), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+    pointer-events: none;
+  }
+
+  /* Neon border glow on hover */
+  .neon-hover {
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .neon-hover:hover {
+    border-color: rgba(0, 255, 255, 0.5);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), inset 0 0 20px rgba(0, 255, 255, 0.05);
+  }
+
+  /* Achievement card glow */
+  .achievement-glow {
+    position: relative;
+    overflow: hidden;
+  }
+  .achievement-glow::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(0, 255, 255, 0.1), transparent, rgba(0, 229, 255, 0.08), transparent);
+    animation: spinSlow 12s linear infinite;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .achievement-glow:hover::before {
+    opacity: 1;
+  }
+
+  /* Console caret blink */
+  .console-caret {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    background: #00FFFF;
+    margin-left: 2px;
+    animation: pulseRing 1s ease-in-out infinite;
+    vertical-align: text-bottom;
+  }
+
+  /* HUD grid for boot screen */
+  .hud-grid {
+    background-image:
+      linear-gradient(rgba(0, 255, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Timeline connector */
+  .timeline-line {
+    position: relative;
+  }
+  .timeline-line::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, rgba(0, 255, 255, 0.4), rgba(0, 163, 255, 0.2), transparent);
+  }
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes spinSlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
