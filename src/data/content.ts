@@ -57,7 +57,7 @@ export const profile = {
   intro:
     'Building intelligent systems powered by Artificial Intelligence, Automation, Mobile Development, and Modern Software Engineering.',
   mission:
-    'Computer Science student at SRM University with a CGPA of 9.11 while simultaneously pursuing a Bachelor of Science in Data Science from IIT Madras. Passionate about Artificial Intelligence, Automation, Flutter Development, Java, Machine Learning, and scalable software engineering. Focused on building impactful products that solve real-world problems.',
+    'Computer Science student at SRM University with a CGPA of 9.24 while simultaneously pursuing a Bachelor of Science in Data Science from IIT Madras. Passionate about Artificial Intelligence, Automation, Flutter Development, Java, Machine Learning, and scalable software engineering. Focused on building impactful products that solve real-world problems.',
   resumeHref: '/resume.pdf',
   githubUsername: 'EswarAdityaReddy',
   leetcodeUsername: 'sungalaeswaradityareddy265',
@@ -232,7 +232,7 @@ export const education: Education[] = [
     detail:
       'Pursuing Bachelor of Technology in Computer Science with a strong focus on AI, ML, and software engineering.',
     period: '2023 - 2027',
-    cgpa: '9.11',
+    cgpa: '9.24',
   },
   {
     institution: 'IIT Madras',
@@ -265,7 +265,7 @@ export const assistantQuickActions = [
 export const assistantResponses: Record<string, string> = {
   help: 'Available commands: about, skills, projects, experience, achievements, education, certifications, contact, resume, clear',
   about:
-    'Commander Eswar is a Computer Science student at SRM University with a CGPA of 9.11, simultaneously pursuing BS Data Science from IIT Madras. Specializations include AI, Machine Learning, Flutter Development, and Workflow Automation.',
+    'Commander Eswar is a Computer Science student at SRM University with a CGPA of 9.24, simultaneously pursuing BS Data Science from IIT Madras. Specializations include AI, Machine Learning, Flutter Development, and Workflow Automation.',
   skills:
     'According to my database, Commander Eswar has expertise in Java, Python, C++, Flutter, React, TensorFlow, YOLOv8, and n8n workflow automation. Full-stack capabilities confirmed across 9 programming languages.',
   projects:
@@ -275,7 +275,7 @@ export const assistantResponses: Record<string, string> = {
   achievements:
     'Notable achievements logged: Top 60 in Deloitte Hacksplosion (21,000+ teams), 3rd Prize at Product Expo for AI Agriculture Project. Achievement clearance: Exceptional.',
   education:
-    'Dual enrollment detected: B.Tech Computer Science at SRM University (CGPA: 9.11) and BS Data Science at IIT Madras (Foundation Level). Academic status: Outstanding.',
+    'Dual enrollment detected: B.Tech Computer Science at SRM University (CGPA: 9.24) and BS Data Science at IIT Madras (Foundation Level). Academic status: Outstanding.',
   certifications:
     '6 verified credentials on file: AWS AI Practitioner, Salesforce Agentforce, NPTEL Machine Learning, Cisco IoT, Skillsoft, and Algo University Graph Camp.',
   contact:

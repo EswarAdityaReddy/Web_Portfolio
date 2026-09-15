@@ -20,7 +20,7 @@ const scanRows = [
   'NAME ........ SUNGALA ESWAR ADITYA REDDY',
   'ROLE ........ AI ENGINEER & SOFTWARE DEVELOPER',
   'STATUS ...... ONLINE',
-  'UNIVERSITY .. SRM UNIVERSITY (CGPA 9.11)',
+  'UNIVERSITY .. SRM UNIVERSITY (CGPA 9.24)',
   'DUAL DEGREE . IIT MADRAS (BS DATA SCIENCE)',
   'SPECIALTY ... MACHINE LEARNING & AUTOMATION',
 ];
@@ -40,7 +40,7 @@ const stageScripts = [
   },
   {
     title: 'HUMAN IDENTIFICATION VERIFIED',
-    body: 'All core domains synchronized. CGPA 9.11 confirmed. Security posture is stable.',
+    body: 'All core domains synchronized. CGPA 9.24 confirmed. Security posture is stable.',
   },
   {
     title: 'WELCOME BACK, COMMANDER',
@@ -230,7 +230,7 @@ export default function BootScreen({ onReady }: BootScreenProps) {
         transition={{ duration: 0.7, ease: 'easeOut' }}
         className="relative mx-auto grid min-h-screen w-full max-w-7xl items-start gap-8 py-8 lg:items-start lg:grid-cols-[0.98fr_1.02fr]"
       >
-        <div className="relative self-start flex items-start justify-center pt-2">
+        <div className="relative flex w-full flex-col items-center self-start pt-2">
           <div className="relative aspect-square w-full max-w-[380px] sm:max-w-[460px]">
             <div className="absolute inset-[10%] rounded-full border border-cyan/15 bg-cyan/5 blur-[1px]" />
             <motion.div
@@ -281,26 +281,26 @@ export default function BootScreen({ onReady }: BootScreenProps) {
               </motion.div>
             </div>
 
-            <div className="absolute inset-x-0 bottom-0 grid grid-cols-2 gap-3 px-2 sm:grid-cols-3 lg:grid-cols-5">
-              {ringConfig.map((ring, index) => (
-                <div
-                  key={ring.label}
-                  className={`rounded-2xl border px-3 py-2 text-[10px] uppercase tracking-[0.3em] backdrop-blur-xl transition ${
-                    stage >= ring.unlockAt ? 'border-cyan/30 bg-cyan/10 text-cyan shadow-glow' : 'border-white/10 bg-black/30 text-slate-400'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${stage >= ring.unlockAt ? 'bg-cyan' : 'bg-slate-500'}`} />
-                    <span>{ring.label}</span>
-                  </div>
-                  <p className="mt-2 text-[9px] tracking-[0.25em] text-white/70">
-                    {stage >= ring.unlockAt ? 'UNLOCKED' : 'LOCKED'}
-                  </p>
-                </div>
-              ))}
-            </div>
-
             <div className="absolute inset-0 rounded-full border border-cyan/10 shadow-[0_0_90px_rgba(0,255,255,0.08)]" />
+          </div>
+
+          <div className="relative z-10 mt-4 grid w-full max-w-[460px] grid-cols-2 gap-3 px-2 sm:grid-cols-3 lg:max-w-[560px] lg:grid-cols-5">
+            {ringConfig.map((ring) => (
+              <div
+                key={ring.label}
+                className={`min-h-[62px] rounded-2xl border px-2.5 py-2 text-[10px] uppercase tracking-[0.18em] backdrop-blur-xl transition ${
+                  stage >= ring.unlockAt ? 'border-cyan/30 bg-cyan/10 text-cyan shadow-glow' : 'border-white/10 bg-black/30 text-slate-400'
+                }`}
+              >
+                  <div className="flex items-center justify-center gap-2">
+                    <span className={`h-2 w-2 shrink-0 rounded-full ${stage >= ring.unlockAt ? 'bg-cyan' : 'bg-slate-500'}`} />
+                  <span className="whitespace-nowrap">{ring.label}</span>
+                </div>
+                <p className="mt-2 text-[9px] tracking-[0.25em] text-white/70">
+                  {stage >= ring.unlockAt ? 'UNLOCKED' : 'LOCKED'}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 

@@ -6,7 +6,7 @@ interface SkillRingProps {
 
 export default function SkillRing({ name, value, detail }: SkillRingProps) {
   return (
-    <div className="holo-border rounded-[1.75rem] border border-cyan/10 bg-white/5 p-5 shadow-panel backdrop-blur-xl">
+    <div className="holo-border rounded-[1.75rem] border border-cyan/10 bg-white/5 p-6 shadow-panel backdrop-blur-xl">
       <div
         className="mx-auto flex h-36 w-36 items-center justify-center rounded-full border border-cyan/15"
         style={{

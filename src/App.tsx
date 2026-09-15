@@ -143,7 +143,7 @@ function useStats() {
     const loadLeetCode = async () => {
       if (!leetcodeUsername || leetcodeUsername.includes('your-leetcode')) return;
       try {
-        const response = await fetch(`https://leetcode-stats-api.herokuapp.com/${leetcodeUsername}`);
+        const response = await fetch(`https://alfa-leetcode-api.onrender.com/userProfile/${leetcodeUsername}`);
         if (!response.ok) return;
         const data = await response.json();
         setStats((current) => ({
@@ -292,7 +292,7 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <motion.article
       whileHover={{ y: -10, scale: 1.01 }}
-      className="holo-panel holo-border card-3d group relative overflow-hidden p-5"
+      className="holo-panel holo-border card-3d group relative overflow-hidden p-6"
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${project.accent} opacity-80 transition-opacity duration-300 group-hover:opacity-100`} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,255,255,0.14),transparent_35%)]" />
@@ -381,7 +381,7 @@ function AssistantPanel() {
   };
 
   return (
-    <div className="holo-panel holo-border relative overflow-hidden p-5">
+    <div className="holo-panel holo-border relative overflow-hidden p-6">
       <div className="absolute inset-0 data-stream opacity-30" />
       <div className="relative space-y-5">
         <div className="flex items-center justify-between gap-3">
@@ -452,9 +452,9 @@ function ContactTerminal() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Form submission placeholder
-    alert(`Message transmitted!\nName: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}`);
-    setFormData({ name: '', email: '', message: '' });
+    const subject = `Portfolio message from ${formData.name}`;
+    const body = `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`;
+    window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   return (
@@ -625,16 +625,17 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [navFlash, setNavFlash] = useState(false);
+  const [jarvisOpen, setJarvisOpen] = useState(false);
 
   const navigateToSection = (sectionId: string) => {
     const el = document.getElementById(sectionId);
     if (!el) return;
-    setNavFlash(true);
-    setTimeout(() => {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setTimeout(() => setNavFlash(false), 400);
-    }, 150);
+    const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo({ top: Math.max(0, el.offsetTop - 76), behavior: 'auto' });
+    requestAnimationFrame(() => {
+      document.documentElement.style.scrollBehavior = previousScrollBehavior;
+    });
   };
 
   useEffect(() => {
@@ -676,24 +677,8 @@ export default function App() {
       <MouseSpotlight />
       <div className="pointer-events-none fixed inset-x-0 top-0 z-40 h-24 bg-gradient-to-b from-[#030712] via-[#030712]/80 to-transparent" />
 
-      {/* Navigation flash overlay */}
-      <AnimatePresence>
-        {navFlash && (
-          <motion.div
-            className="pointer-events-none fixed inset-0 z-[60]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            style={{
-              background: 'radial-gradient(circle at center, rgba(0,255,255,0.08) 0%, rgba(0,255,255,0.03) 50%, transparent 80%)',
-            }}
-          />
-        )}
-      </AnimatePresence>
-
       {/* ─── Navigation ─────────────────────────────────────────────────── */}
-      <header className={`fixed inset-x-0 top-0 z-50 transition-all ${scrolled ? 'border-b border-cyan/10 bg-[#030712]/85 backdrop-blur-xl' : 'bg-transparent'}`}>
+      <header className={`fixed inset-x-0 top-0 z-50 transition-all ${scrolled ? 'bg-[#030712]/85 shadow-[0_8px_30px_rgba(0,0,0,0.28)] backdrop-blur-xl' : 'bg-transparent'}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <a href="#home" className="inline-flex items-center gap-3 rounded-full border border-cyan/10 bg-white/5 px-4 py-2 text-sm font-medium text-white backdrop-blur-xl transition hover:border-cyan/30 hover:bg-white/8">
             <div className="h-2.5 w-2.5 rounded-full bg-cyan shadow-[0_0_20px_rgba(0,255,255,0.9)]" />
@@ -781,27 +766,13 @@ export default function App() {
                   </div>
                   <p className="max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">{profile.intro}</p>
                 </div>
-                <div className="flex flex-wrap gap-3">
-                  <a href="#about" className="inline-flex items-center gap-2 rounded-full bg-cyan px-6 py-3 font-semibold text-slate-950 transition hover:scale-[1.02] btn-magnetic">
-                    Initialize Portfolio <ArrowRight className="h-4 w-4" />
-                  </a>
-                  <a href="#projects" className="inline-flex items-center gap-2 rounded-full border border-cyan/25 bg-white/5 px-6 py-3 font-semibold text-white transition hover:border-cyan/60 hover:bg-cyan/10 btn-magnetic">
-                    View Projects <Code2 className="h-4 w-4" />
-                  </a>
-                  <a href={profile.resumeHref} download className="inline-flex items-center gap-2 rounded-full border border-cyan/25 bg-white/5 px-6 py-3 font-semibold text-white transition hover:border-cyan/60 hover:bg-cyan/10 btn-magnetic">
-                    Download Resume <Download className="h-4 w-4" />
-                  </a>
-                  <a href="#contact" className="inline-flex items-center gap-2 rounded-full border border-cyan/25 bg-white/5 px-6 py-3 font-semibold text-white transition hover:border-cyan/60 hover:bg-cyan/10 btn-magnetic">
-                    Contact AI <Bot className="h-4 w-4" />
-                  </a>
-                </div>
                 <div className="grid gap-4 sm:grid-cols-3">
                   {[
-                    { label: 'CGPA', value: '9.11' },
+                    { label: 'CGPA', value: '9.24' },
                     { label: 'Hackathons', value: '2' },
                     { label: 'Certifications', value: '6' },
                   ].map((item) => (
-                    <div key={item.label} className="holo-panel holo-border p-4">
+                    <div key={item.label} className="relative z-20 holo-panel holo-border p-4">
                       <p className="text-xs uppercase tracking-[0.35em] text-cyan/70">{item.label}</p>
                       <p className="mt-3 text-2xl font-semibold text-white">{item.value}</p>
                     </div>
@@ -810,7 +781,7 @@ export default function App() {
               </div>
 
               {/* ─── JARVIS Arc Reactor AI Core ─── */}
-              <div className="relative flex items-center justify-center">
+              <div className="relative flex items-center justify-center lg:translate-x-8 xl:translate-x-12">
                 <RadarScanner />
                 <motion.div
                   animate={{ y: [0, -12, 0] }}
@@ -1087,7 +1058,7 @@ export default function App() {
                 {/* Animated Statistics */}
                 <div className="grid gap-4 sm:grid-cols-5">
                   {[
-                    { label: 'CGPA', value: 9.11, decimals: 2 },
+                    { label: 'CGPA', value: 9.24, decimals: 2 },
                     { label: 'Hackathons', value: 2, decimals: 0 },
                     { label: 'Projects', value: 10, suffix: '+', decimals: 0 },
                     { label: 'Certifications', value: 6, decimals: 0 },
@@ -1287,7 +1258,7 @@ export default function App() {
               <motion.div
                 key={certification.name}
                 whileHover={{ y: -6 }}
-                className="holo-panel holo-border neon-hover shimmer-border p-5"
+                className="holo-panel holo-border neon-hover shimmer-border p-6"
               >
                 <div className="flex items-start justify-between gap-3">
                   <ShieldCheck className="h-6 w-6 text-cyan" />
@@ -1364,12 +1335,12 @@ export default function App() {
                 { label: 'Stars', value: stats.github.stars },
                 { label: 'Following', value: stats.github.following },
               ].map((item) => (
-                <div key={item.label} className="holo-panel holo-border p-5">
+                <div key={item.label} className="holo-panel holo-border p-6">
                   <p className="text-xs uppercase tracking-[0.35em] text-cyan/70">{item.label}</p>
                   <p className="mt-3 text-4xl font-black text-white">{item.value}</p>
                 </div>
               ))}
-              <div className="holo-panel holo-border p-5 sm:col-span-2 xl:col-span-4">
+              <div className="holo-panel holo-border p-6 sm:col-span-2 xl:col-span-4">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <p className="text-xs uppercase tracking-[0.35em] text-cyan/70">GitHub Profile</p>
@@ -1384,10 +1355,21 @@ export default function App() {
               </div>
             </div>
             <div className="space-y-4">
-              <div className="holo-panel holo-border p-5">
-                <div className="flex items-center gap-2 text-sm uppercase tracking-[0.35em] text-cyan">
-                  <BookOpen className="h-4 w-4" />
-                  LeetCode Stats
+              <div className="holo-panel holo-border p-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 text-sm uppercase tracking-[0.35em] text-cyan">
+                    <BookOpen className="h-4 w-4" />
+                    LeetCode Stats
+                  </div>
+                  <a
+                    href={`https://leetcode.com/u/${profile.leetcodeUsername}/`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-cyan/20 bg-white/5 px-3 py-2 text-xs uppercase tracking-[0.2em] text-white transition hover:border-cyan/50 hover:bg-cyan/10 btn-magnetic"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Open Profile
+                  </a>
                 </div>
                 <div className="mt-5 grid grid-cols-2 gap-3">
                   {[
@@ -1430,9 +1412,6 @@ export default function App() {
             <p className="font-display text-lg font-bold uppercase tracking-[0.15em] text-white glow-text">
               Sungala Eswar Aditya Reddy
             </p>
-            <p className="text-xs uppercase tracking-[0.4em] text-cyan/60">
-              Powered by Artificial Intelligence
-            </p>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-4">
               <a href={`mailto:${profile.email}`} className="inline-flex items-center gap-2 rounded-full border border-cyan/15 bg-white/5 px-4 py-2 text-cyan transition hover:border-cyan/40 hover:bg-cyan/10">
                 <Mail className="h-4 w-4" /> Mail
@@ -1450,6 +1429,74 @@ export default function App() {
           </div>
         </footer>
       </main>
+
+      <AnimatePresence>
+        {jarvisOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 18, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 18, scale: 0.97 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="fixed inset-x-4 bottom-20 z-40 mx-auto max-w-md overflow-hidden rounded-3xl border border-cyan/25 bg-slate-950/95 shadow-[0_0_45px_rgba(0,255,255,0.18)] backdrop-blur-2xl sm:inset-x-auto sm:bottom-20 sm:right-7 sm:w-[min(calc(100vw-2rem),28rem)]"
+            role="dialog"
+            aria-label="Ask JARVIS chat"
+          >
+            <div className="absolute inset-0 terminal-grid opacity-35" />
+            <div className="relative">
+              <div className="flex items-center justify-between border-b border-cyan/15 px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-cyan/35 bg-cyan/10">
+                    <Bot className="h-5 w-5 text-cyan" />
+                  </span>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.28em] text-cyan/70">JARVIS CHAT</p>
+                    <p className="text-sm font-semibold text-white">System interface</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setJarvisOpen(false)}
+                  aria-label="Close JARVIS chat"
+                  className="rounded-full p-2 text-cyan/70 transition hover:bg-cyan/10 hover:text-cyan"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="space-y-4 p-4">
+                <div className="rounded-2xl border border-cyan/15 bg-black/35 p-4 font-mono text-sm leading-6 text-slate-300">
+                  <p className="text-cyan">&gt; connection established</p>
+                  <p className="mt-2">JARVIS chat is currently in the building phase.</p>
+                  <p className="mt-2 text-cyan/70">The interactive assistant will be available soon.</p>
+                </div>
+                <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-500">
+                  <Terminal className="h-4 w-4 text-cyan/50" />
+                  <span className="flex-1">Chat input coming soon...</span>
+                  <span className="h-2 w-2 rounded-full bg-amber-400/80" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.button
+        type="button"
+        onClick={() => setJarvisOpen((open) => !open)}
+        aria-expanded={jarvisOpen}
+        aria-label={jarvisOpen ? 'Close JARVIS chat' : 'Ask JARVIS in the chat panel'}
+        whileHover={{ y: -4, scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        className="fixed bottom-4 right-4 z-40 inline-flex items-center gap-2 rounded-full border border-cyan/35 bg-slate-950/90 px-3 py-2 text-xs font-semibold text-white shadow-[0_0_22px_rgba(0,255,255,0.2)] backdrop-blur-xl transition hover:border-cyan/70 hover:bg-cyan/10 sm:bottom-5 sm:right-5"
+      >
+        <span className="relative flex h-7 w-7 items-center justify-center rounded-full border border-cyan/40 bg-cyan/10">
+          <Bot className="h-4 w-4 text-cyan" />
+          <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full border-2 border-slate-950 bg-cyan shadow-[0_0_8px_rgba(0,255,255,0.9)]" />
+        </span>
+        <span className="flex flex-col items-start leading-none">
+          <span className="text-[9px] uppercase tracking-[0.25em] text-cyan/70">Online</span>
+          <span className="mt-0.5">Ask JARVIS</span>
+        </span>
+      </motion.button>
 
       {/* ─── Boot Screen Overlay ──────────────────────────────────────────── */}
       <AnimatePresence>{!bootComplete ? <BootScreen key="boot-overlay" onReady={() => setBootComplete(true)} /> : null}</AnimatePresence>
