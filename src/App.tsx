@@ -19,6 +19,7 @@ import {
   Medal,
   Menu,
   Phone,
+  RefreshCw,
   Search,
   Send,
   ShieldCheck,
@@ -78,6 +79,7 @@ type StatsState = {
     mediumSolved: number;
     hardSolved: number;
     ranking: string;
+    status: 'syncing' | 'ready' | 'error';
   };
 };
 
@@ -101,11 +103,13 @@ const defaultStats: StatsState = {
     mediumSolved: 0,
     hardSolved: 0,
     ranking: 'Sync pending',
+    status: 'syncing',
   },
 };
 
 function useStats() {
   const [stats, setStats] = useState<StatsState>(defaultStats);
+  const [leetcodeRefresh, setLeetcodeRefresh] = useState(0);
 
   useEffect(() => {
     const githubUsername = profile.githubUsername;
@@ -142,30 +146,63 @@ function useStats() {
 
     const loadLeetCode = async () => {
       if (!leetcodeUsername || leetcodeUsername.includes('your-leetcode')) return;
+      setStats((current) => ({
+        ...current,
+        leetcode: { ...current.leetcode, status: 'syncing' },
+      }));
       try {
-        const response = await fetch(`https://alfa-leetcode-api.onrender.com/userProfile/${leetcodeUsername}`);
-        if (!response.ok) return;
-        const data = await response.json();
+        const endpoints = [
+          `https://alfa-leetcode-api.onrender.com/userProfile/${leetcodeUsername}`,
+          `https://leetcode-api-pied.vercel.app/user/${leetcodeUsername}`,
+        ];
+        let data: Record<string, any> | null = null;
+        for (const endpoint of endpoints) {
+          try {
+            const controller = new AbortController();
+            const timeout = window.setTimeout(() => controller.abort(), 30000);
+            const response = await fetch(`${endpoint}?refresh=${Date.now()}`, {
+              signal: controller.signal,
+              cache: 'no-store',
+            });
+            window.clearTimeout(timeout);
+            if (response.ok) {
+              data = await response.json();
+              break;
+            }
+          } catch {
+            // Try the next public endpoint.
+          }
+        }
+        if (!data) throw new Error('LeetCode endpoints unavailable');
+        const submissions = data.submitStats?.acSubmissionNum ?? data.matchedUserStats?.acSubmissionNum ?? [];
+        const solvedFor = (difficulty: string) =>
+          data[`${difficulty.toLowerCase()}Solved`] ?? submissions.find((item: { difficulty?: string }) => item.difficulty === difficulty)?.count ?? 0;
         setStats((current) => ({
           ...current,
           leetcode: {
-            totalSolved: data.totalSolved ?? current.leetcode.totalSolved,
-            easySolved: data.easySolved ?? current.leetcode.easySolved,
-            mediumSolved: data.mediumSolved ?? current.leetcode.mediumSolved,
-            hardSolved: data.hardSolved ?? current.leetcode.hardSolved,
-            ranking: data.ranking ? `Top ${data.ranking}` : current.leetcode.ranking,
+            totalSolved: data.totalSolved ?? solvedFor('All'),
+            easySolved: data.easySolved ?? solvedFor('Easy'),
+            mediumSolved: data.mediumSolved ?? solvedFor('Medium'),
+            hardSolved: data.hardSolved ?? solvedFor('Hard'),
+            ranking: data.ranking ?? data.profile?.ranking
+              ? `Top ${data.ranking ?? data.profile.ranking}`
+              : current.leetcode.ranking,
+            status: 'ready',
           },
         }));
       } catch {
-        // Fallback state stays visible
+        setStats((current) => ({
+          ...current,
+          leetcode: { ...current.leetcode, ranking: 'Sync unavailable', status: 'error' },
+        }));
       }
     };
 
     void loadGithub();
     void loadLeetCode();
-  }, []);
+  }, [leetcodeRefresh]);
 
-  return stats;
+  return { stats, refreshLeetCode: () => setLeetcodeRefresh((value) => value + 1) };
 }
 
 /* ─── Particle Field ──────────────────────────────────────────────────────── */
@@ -620,7 +657,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
 
 export default function App() {
   const [bootComplete, setBootComplete] = useState(false);
-  const stats = useStats();
+  const { stats, refreshLeetCode } = useStats();
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [scrolled, setScrolled] = useState(false);
@@ -1044,19 +1081,19 @@ export default function App() {
           title="Mission Profile"
           description={profile.mission}
         >
-          <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-            <div className="holo-panel holo-border relative overflow-hidden p-6 sm:p-8">
+          <div className="grid gap-6">
+            <div className="holo-panel holo-border relative min-w-0 overflow-hidden p-5 sm:p-8">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,255,255,0.14),transparent_35%)]" />
               <div className="relative space-y-6">
-                <div className="flex flex-wrap items-center gap-3 text-sm uppercase tracking-[0.3em] text-cyan">
+                <div className="flex min-w-0 flex-wrap items-center gap-3 text-sm uppercase tracking-[0.24em] text-cyan">
                   <MapPin className="h-4 w-4" />
                   {profile.location}
-                  <span className="rounded-full border border-cyan/15 bg-white/5 px-3 py-1 text-xs text-mist/80">{profile.title}</span>
+                  <span className="max-w-full break-words rounded-full border border-cyan/15 bg-white/5 px-3 py-1 text-xs leading-5 tracking-[0.08em] text-mist/80">{profile.title}</span>
                 </div>
-                <p className="max-w-3xl text-lg leading-8 text-slate-200 sm:text-xl">{profile.intro}</p>
+                <p className="max-w-4xl break-words text-lg leading-8 text-slate-200 sm:text-xl">{profile.intro}</p>
 
                 {/* Animated Statistics */}
-                <div className="grid gap-4 sm:grid-cols-5">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
                   {[
                     { label: 'CGPA', value: 9.24, decimals: 2 },
                     { label: 'Hackathons', value: 2, decimals: 0 },
@@ -1064,11 +1101,11 @@ export default function App() {
                     { label: 'Certifications', value: 6, decimals: 0 },
                     { label: 'Languages', value: 9, decimals: 0 },
                   ].map((stat) => (
-                    <div key={stat.label} className="rounded-2xl border border-cyan/15 bg-white/5 p-4 text-center">
+                    <div key={stat.label} className="min-w-0 rounded-2xl border border-cyan/15 bg-white/5 p-3 text-center sm:p-4">
                       <p className="text-2xl font-bold text-cyan">
                         <AnimatedCounter target={stat.value} decimals={stat.decimals} suffix={stat.suffix} />
                       </p>
-                      <p className="mt-1 text-xs uppercase tracking-[0.2em] text-slate-400">{stat.label}</p>
+                      <p className="mt-1 break-words text-[10px] uppercase tracking-[0.14em] text-slate-400 sm:text-xs sm:tracking-[0.2em]">{stat.label}</p>
                     </div>
                   ))}
                 </div>
@@ -1085,7 +1122,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-            <AssistantPanel />
           </div>
         </HoloSection>
 
@@ -1361,15 +1397,26 @@ export default function App() {
                     <BookOpen className="h-4 w-4" />
                     LeetCode Stats
                   </div>
-                  <a
-                    href={`https://leetcode.com/u/${profile.leetcodeUsername}/`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border border-cyan/20 bg-white/5 px-3 py-2 text-xs uppercase tracking-[0.2em] text-white transition hover:border-cyan/50 hover:bg-cyan/10 btn-magnetic"
-                  >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                    Open Profile
-                  </a>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={refreshLeetCode}
+                      disabled={stats.leetcode.status === 'syncing'}
+                      className="inline-flex items-center gap-2 rounded-full border border-cyan/20 bg-white/5 px-3 py-2 text-xs uppercase tracking-[0.16em] text-white transition hover:border-cyan/50 hover:bg-cyan/10 disabled:cursor-wait disabled:opacity-60"
+                    >
+                      <RefreshCw className={`h-3.5 w-3.5 ${stats.leetcode.status === 'syncing' ? 'animate-spin' : ''}`} />
+                      Sync
+                    </button>
+                    <a
+                      href={`https://leetcode.com/u/${profile.leetcodeUsername}/`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full border border-cyan/20 bg-white/5 px-3 py-2 text-xs uppercase tracking-[0.16em] text-white transition hover:border-cyan/50 hover:bg-cyan/10 btn-magnetic"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      Open Profile
+                    </a>
+                  </div>
                 </div>
                 <div className="mt-5 grid grid-cols-2 gap-3">
                   {[
@@ -1385,7 +1432,12 @@ export default function App() {
                   ))}
                 </div>
                 <div className="mt-4 rounded-2xl border border-cyan/15 bg-black/30 p-4 text-sm text-slate-300">
-                  Ranking status: <span className="text-cyan">{stats.leetcode.ranking}</span>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span>Ranking status: <span className="text-cyan">{stats.leetcode.ranking}</span></span>
+                    <span className={stats.leetcode.status === 'error' ? 'text-amber-300' : 'text-cyan/70'}>
+                      {stats.leetcode.status === 'syncing' ? 'Updating live data...' : stats.leetcode.status === 'error' ? 'Retry sync unavailable' : 'Live data connected'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
