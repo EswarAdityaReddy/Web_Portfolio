@@ -703,7 +703,7 @@ export default function App() {
             <a
               href={profile.resumeHref}
               download
-              className="inline-flex items-center gap-2 rounded-full border border-cyan/30 bg-cyan/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-cyan transition hover:border-cyan/60 hover:bg-cyan/20 btn-magnetic"
+              className="hidden items-center gap-2 rounded-full border border-cyan/30 bg-cyan/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-cyan transition hover:border-cyan/60 hover:bg-cyan/20 btn-magnetic sm:inline-flex"
             >
               <Download className="h-4 w-4" />
               Resume
@@ -786,7 +786,7 @@ export default function App() {
                 <motion.div
                   animate={{ y: [0, -12, 0] }}
                   transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-                  className="relative z-10 flex h-[380px] w-[380px] items-center justify-center sm:h-[500px] sm:w-[500px]"
+                  className="relative z-10 flex h-[min(88vw,380px)] w-[min(88vw,380px)] items-center justify-center sm:h-[500px] sm:w-[500px]"
                 >
                   {/* Ring 1 — outermost, slow spin, dashed */}
                   <motion.div

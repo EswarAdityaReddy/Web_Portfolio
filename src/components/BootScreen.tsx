@@ -195,7 +195,7 @@ export default function BootScreen({ onReady }: BootScreenProps) {
   }, [launching, onReady]);
 
   return (
-    <div ref={containerRef} className="fixed inset-0 z-50 overflow-hidden bg-[#030712] px-4 text-[#E5F9FF]">
+    <div ref={containerRef} className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-[#030712] px-3 text-[#E5F9FF] sm:px-4">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,255,0.16),transparent_26%),radial-gradient(circle_at_bottom,rgba(0,163,255,0.12),transparent_28%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,7,18,0.92),rgba(3,7,18,0.78))]" />
       <div className="absolute inset-0 hud-grid opacity-20" />
@@ -228,7 +228,7 @@ export default function BootScreen({ onReady }: BootScreenProps) {
         initial={{ opacity: 0, y: 24, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
-        className="relative mx-auto grid min-h-screen w-full max-w-7xl items-start gap-8 py-8 lg:items-start lg:grid-cols-[0.98fr_1.02fr]"
+        className="relative mx-auto grid min-h-full w-full max-w-7xl items-start gap-6 py-4 sm:gap-8 sm:py-8 lg:min-h-screen lg:items-start lg:grid-cols-[0.98fr_1.02fr]"
       >
         <div className="relative flex w-full flex-col items-center self-start pt-2">
           <div className="relative aspect-square w-full max-w-[380px] sm:max-w-[460px]">
@@ -304,9 +304,9 @@ export default function BootScreen({ onReady }: BootScreenProps) {
           </div>
         </div>
 
-        <HolographicPanel className="relative self-start flex min-h-[560px] flex-col overflow-hidden p-0 lg:min-h-[590px]">
+        <HolographicPanel className="relative self-start flex min-h-[500px] w-full flex-col overflow-hidden p-0 sm:min-h-[560px] lg:min-h-[590px]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,255,255,0.16),transparent_36%)]" />
-          <div className="relative shrink-0 border-b border-cyan/10 px-6 py-3 sm:px-8 sm:py-3.5">
+          <div className="relative shrink-0 border-b border-cyan/10 px-4 py-3 sm:px-8 sm:py-3.5">
             <p className="text-xs uppercase tracking-[0.55em] text-cyan/70">Boot Sequence</p>
             <div className="mt-2.5 min-h-[4.1rem] font-mono text-2xl font-semibold leading-tight text-white glow-text sm:min-h-[5rem] sm:text-4xl">
               <span>
@@ -316,7 +316,7 @@ export default function BootScreen({ onReady }: BootScreenProps) {
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 flex-col space-y-2.5 px-6 py-2.5 sm:px-8 sm:py-3">
+          <div className="relative flex min-h-0 flex-1 flex-col space-y-2.5 px-4 py-2.5 sm:px-8 sm:py-3">
             <p className="min-h-[72px] block max-w-2xl font-mono text-sm leading-7 text-mist/80 sm:min-h-[92px] sm:text-base">
               {typedBody}
               <span className="console-caret" />
@@ -336,9 +336,9 @@ export default function BootScreen({ onReady }: BootScreenProps) {
                         transition={{ duration: 0.35, delay: index * 0.05 }}
                         className="flex items-center gap-3"
                       >
-                        <span className="w-28 text-cyan/80 sm:w-36">{row.split(' ........ ')[0]}</span>
-                        <span className="text-cyan/35">........</span>
-                        <span className="text-white">{row.split(' ........ ')[1]}</span>
+                        <span className="w-20 shrink-0 text-cyan/80 sm:w-36">{row.split(' ........ ')[0]}</span>
+                        <span className="hidden text-cyan/35 sm:inline">........</span>
+                        <span className="min-w-0 break-words text-white">{row.split(' ........ ')[1]}</span>
                       </motion.div>
                     ))}
                   </div>
